@@ -1,461 +1,16 @@
 const STORAGE_KEYS = {
-  currentTournament: "swiss-table-tennis-manager-state",
-  playerGroups: "swiss-table-tennis-manager-player-groups",
-  tournamentHistory: "swiss-table-tennis-manager-history",
-  playerRegistry: "swiss-table-tennis-manager-player-registry",
-  selectedHistory: "swiss-table-tennis-manager-selected-history",
-  language: "swiss-table-tennis-manager-language"
-};
-
-const TRANSLATIONS = {
-  en: {
-    sidebar: {
-      system: "Swiss Tournament OS",
-      liveStatus: "Live Status",
-      description: "Generate rounds, manage withdrawals, archive events, and compare performance across tournaments."
-    },
-    language: {
-      selector: "Language selector",
-      en: "English",
-      es: "Spanish"
-    },
-    nav: {
-      setup: "Setup",
-      control: "Control",
-      pairings: "Pairings",
-      leaderboard: "Leaderboard",
-      globalRanking: "Global Ranking"
-    },
-    breadcrumb: { currentSection: "Current Section" },
-    hero: {
-      eyebrow: "Swiss-System Tournament Console",
-      title: "Table Tennis Manager",
-      copy: "Create tournaments, generate fair Swiss pairings, record match results, and track standings in real time."
-    },
-    stats: { tournament: "Tournament", round: "Round", players: "Players" },
-    setup: {
-      title: "Tournament Setup",
-      subtitle: "Initialize your event and register participants.",
-      tournamentName: "Tournament Name",
-      playerCount: "Number of Players",
-      participants: "Participants"
-    },
-    control: {
-      title: "Round Control",
-      subtitle: "Advance rounds only when every match result is saved.",
-      status: "Status",
-      completedMatches: "Completed Matches"
-    },
-    players: {
-      title: "Players Management",
-      subtitle: "Withdraw players mid-tournament while preserving completed results."
-    },
-    pairings: {
-      title: "Round Pairings",
-      noneGenerated: "No round has been generated yet.",
-      generateToView: "Generate a round to view match cards.",
-      roundLiveResults: "Round {round} pairings and live results."
-    },
-    leaderboard: {
-      title: "Leaderboard",
-      subtitle: "Ranked by total scoring points, then sets won and total rally points. Withdrawn players stay listed at the bottom."
-    },
-    history: {
-      title: "Global Ranking / Statistics",
-      subtitle: "Select archived tournaments to build a combined player ranking across events."
-    },
-    table: {
-      player: "Player",
-      status: "Status",
-      points: "Points",
-      wins: "Wins",
-      losses: "Losses",
-      setsDiff: "Sets +/-",
-      scoresDiff: "Scores +/-",
-      opposition: "Opposition",
-      tournaments: "Tournaments",
-      sets: "Sets",
-      scoring: "Scoring"
-    },
-    status: {
-      waitingForSetup: "Waiting for setup",
-      readyRound1: "Ready to generate round 1",
-      roundComplete: "Round {round} complete",
-      roundInProgress: "Round {round} in progress",
-      active: "Active",
-      withdrawn: "Withdrawn",
-      removed: "Removed",
-      notCreated: "Not Created",
-      unknown: "Unknown",
-      pending: "Pending",
-      saved: "Saved",
-      completed: "Completed"
-    },
-    match: {
-      pending: "Pending",
-      vs: "VS",
-      setScores: "Set Scores",
-      livePreview: "Live Preview",
-      addSetsToCalculate: "Add sets to calculate the result.",
-      topPlayerSetScore: "Top player set score",
-      bottomPlayerSetScore: "Bottom player set score",
-      automaticWin: "Automatic Win",
-      noSetEntryRequired: "No set entry required.",
-      automaticMatchWinApplied: "Automatic match win applied.",
-      byeApplied: "Bye Applied",
-      saveResult: "Save Result",
-      updateResult: "Update Result",
-      setLabel: "Set {index}",
-      tableLabel: "Table {table}",
-      topPlayerWinning: "Top player currently wins the match.",
-      bottomPlayerWinning: "Bottom player currently wins the match.",
-      drawOnSets: "Match is currently a draw on sets.",
-      bye: "Bye"
-    },
-    actions: {
-      toggleNavigation: "Toggle navigation",
-      closeDialog: "Close dialog",
-      createTournament: "Create Tournament",
-      loadSamplePlayers: "Load Sample Players",
-      generateNextRound: "Generate Next Round",
-      completeAndSaveTournament: "Complete & Save Tournament",
-      savePlayers: "Save Players",
-      loadPlayers: "Load Players",
-      viewTournamentHistory: "View Tournament History",
-      resetTournament: "Reset Tournament",
-      exportStandingsCsv: "Export Standings CSV",
-      scrollToTop: "Scroll to top",
-      addSet: "Add Set",
-      removeSet: "Remove set",
-      saveResult: "Save Result",
-      updateResult: "Update Result",
-      removePlayer: "Remove Player",
-      cancel: "Cancel",
-      close: "Close",
-      keepPlayerList: "Keep Player List",
-      clearEverything: "Clear Everything",
-      loadGroupPlayers: "Load Players",
-      delete: "Delete",
-      viewStandings: "View Standings",
-      back: "Back",
-      savePlayersConfirm: "Save Players"
-    },
-    placeholders: {
-      tournamentName: "Spring Championship",
-      participants: "One player per line",
-      groupName: "Club Players"
-    },
-    empty: {
-      leaderboard: "Create a tournament to see standings.",
-      globalRanking: "Archived tournaments will populate this ranking.",
-      playersManager: "Create a tournament to manage participants.",
-      historySelection: "Save completed tournaments to build a global ranking.",
-      noOpponents: "No opponents yet",
-      selectArchived: "Select at least one archived tournament."
-    },
-    modal: {
-      dialog: "Dialog",
-      removePlayerTitle: "Remove Player",
-      removePlayerBody: "Withdraw <strong>{name}</strong> from the current tournament?",
-      removePlayerHelp: "Completed matches stay recorded. Any unfinished matches in the current round are rebuilt so future Swiss pairings remain valid.",
-      tournamentSavedTitle: "Tournament Saved",
-      tournamentSavedBody: "<p><strong>{name}</strong> is now stored in tournament history and available for global ranking aggregation.</p>",
-      resetTitle: "Reset Tournament",
-      resetBody: "Choose how you want to reset the current tournament.",
-      resetHelp: "All rounds, results, and live standings will be cleared. You can either keep the current player list for a fresh event or wipe everything.",
-      savePlayersTitle: "Save Players",
-      savePlayersHelp: "{count} players will be saved for future tournaments.",
-      groupName: "Group Name",
-      loadPlayersTitle: "Load Players",
-      tournamentHistoryTitle: "Tournament History"
-    },
-    alerts: {
-      enterTournamentName: "Please enter a tournament name.",
-      validPlayerCount: "Please enter a valid player count of at least 2.",
-      playerCountMismatch: "Player count and participant list do not match. Expected {count} players.",
-      uniquePlayerNames: "Player names must be unique within a tournament.",
-      createTournamentBeforeRounds: "Create a tournament before generating rounds.",
-      atLeastTwoPlayers: "At least two active players are required to generate a round.",
-      saveResultsBeforeRound: "Save all match results before generating the next round.",
-      noValidPairings: "No valid pairings could be generated.",
-      setScoresWholeNumbers: "Set scores must be whole numbers greater than or equal to 0.",
-      addSetBeforeSaving: "Add at least one set before saving the result.",
-      setWinnerRequired: "Each set must have a winner. Tied set scores are not allowed.",
-      createTournamentBeforeExport: "Create a tournament before exporting standings.",
-      createAndPlayBeforeArchive: "Create and play a tournament before archiving it.",
-      finishRoundBeforeArchive: "Finish the current round before saving the tournament to history.",
-      atLeastOneCompletedMatch: "At least one completed match is required before saving a tournament.",
-      noTournamentDataReset: "There is no tournament data to reset.",
-      addPlayersBeforeSave: "Add players before saving a reusable list.",
-      enterGroupName: "Please enter a group name.",
-      noSavedPlayerGroups: "No saved player groups yet.",
-      noSavedTournaments: "No tournaments have been saved yet."
-    },
-    notifications: {
-      languageChangedTitle: "Language",
-      languageChangedBodyEn: "English enabled.",
-      languageChangedBodyEs: "Spanish enabled.",
-      tournamentCreatedTitle: "Tournament Created",
-      tournamentCreatedBody: "{name} is ready for round generation.",
-      roundGeneratedTitle: "Round Generated",
-      roundGeneratedBody: "Round {round} pairings are ready.",
-      resultsSavedTitle: "Results Saved",
-      resultsSavedBody: "Match results updated successfully.",
-      playerRemovedTitle: "Player Removed",
-      playerRemovedBody: "{name} has been withdrawn from future rounds.",
-      tournamentArchivedTitle: "Tournament Archived",
-      tournamentArchivedBody: "{name} was saved to history.",
-      tournamentResetTitle: "Tournament Reset",
-      tournamentResetKeepBody: "Rounds cleared and player list kept.",
-      tournamentResetClearBody: "Tournament data cleared.",
-      playersSavedTitle: "Players Saved",
-      playersSavedBody: "{name} is available for future tournaments.",
-      playersLoadedTitle: "Players Loaded",
-      playersLoadedBody: "{name} has been loaded into setup.",
-      playerGroupDeletedTitle: "Player Group Deleted",
-      playerGroupDeletedBody: "Saved player list removed.",
-      historyDeletedTitle: "History Entry Deleted",
-      historyDeletedBody: "Archived tournament removed."
-    },
-    misc: {
-      playersShort: "players",
-      roundsShort: "rounds",
-      savedOn: "saved {date}",
-      pointsShort: "pts",
-      scoreLabel: "Score",
-      winsLossesShort: "{wins}W-{losses}L",
-      sampleTournamentName: "Elite Night Series"
-    }
-  },
-  es: {
-    sidebar: {
-      system: "Sistema Suizo de Torneos",
-      liveStatus: "Estado en vivo",
-      description: "Genera rondas, gestiona retiradas, archiva eventos y compara rendimientos entre torneos."
-    },
-    language: {
-      selector: "Selector de idioma",
-      en: "Inglés",
-      es: "Español"
-    },
-    nav: {
-      setup: "Configuración",
-      control: "Control",
-      pairings: "Emparejamientos",
-      leaderboard: "Clasificación",
-      globalRanking: "Ranking global"
-    },
-    breadcrumb: { currentSection: "Sección actual" },
-    hero: {
-      eyebrow: "Consola de Torneos Sistema Suizo",
-      title: "Gestor de Tenis de Mesa",
-      copy: "Crea torneos, genera emparejamientos suizos justos, registra resultados y sigue la clasificación en tiempo real."
-    },
-    stats: { tournament: "Torneo", round: "Ronda", players: "Jugadores" },
-    setup: {
-      title: "Configuración del Torneo",
-      subtitle: "Inicializa tu evento y registra participantes.",
-      tournamentName: "Nombre del Torneo",
-      playerCount: "Número de Jugadores",
-      participants: "Participantes"
-    },
-    control: {
-      title: "Control de Rondas",
-      subtitle: "Avanza de ronda solo cuando todos los resultados estén guardados.",
-      status: "Estado",
-      completedMatches: "Partidos completados"
-    },
-    players: {
-      title: "Gestión de Jugadores",
-      subtitle: "Retira jugadores en mitad del torneo conservando los resultados completados."
-    },
-    pairings: {
-      title: "Emparejamientos de la Ronda",
-      noneGenerated: "Aún no se ha generado ninguna ronda.",
-      generateToView: "Genera una ronda para ver las tarjetas de partido.",
-      roundLiveResults: "Emparejamientos y resultados en vivo de la ronda {round}."
-    },
-    leaderboard: {
-      title: "Clasificación",
-      subtitle: "Ordenada por puntos totales, luego sets ganados y puntos de tanteo. Los retirados permanecen al final."
-    },
-    history: {
-      title: "Ranking Global / Estadísticas",
-      subtitle: "Selecciona torneos archivados para construir un ranking combinado entre eventos."
-    },
-    table: {
-      player: "Jugador",
-      status: "Estado",
-      points: "Puntos",
-      wins: "Victorias",
-      losses: "Derrotas",
-      setsDiff: "Sets +/-",
-      scoresDiff: "Puntos +/-",
-      opposition: "Rivales",
-      tournaments: "Torneos",
-      sets: "Sets",
-      scoring: "Puntuación"
-    },
-    status: {
-      waitingForSetup: "Esperando configuración",
-      readyRound1: "Listo para generar la ronda 1",
-      roundComplete: "Ronda {round} completada",
-      roundInProgress: "Ronda {round} en curso",
-      active: "Activo",
-      withdrawn: "Retirado",
-      removed: "Eliminado",
-      notCreated: "No creado",
-      unknown: "Desconocido",
-      pending: "Pendiente",
-      saved: "Guardado",
-      completed: "Completado"
-    },
-    match: {
-      pending: "Pendiente",
-      vs: "VS",
-      setScores: "Marcadores por Set",
-      livePreview: "Vista previa",
-      addSetsToCalculate: "Añade sets para calcular el resultado.",
-      topPlayerSetScore: "Puntuación del set del jugador superior",
-      bottomPlayerSetScore: "Puntuación del set del jugador inferior",
-      automaticWin: "Victoria automática",
-      noSetEntryRequired: "No es necesario introducir sets.",
-      automaticMatchWinApplied: "Victoria automática aplicada.",
-      byeApplied: "Descanso aplicado",
-      saveResult: "Guardar resultado",
-      updateResult: "Actualizar resultado",
-      setLabel: "Set {index}",
-      tableLabel: "Mesa {table}",
-      topPlayerWinning: "El jugador superior va ganando el partido.",
-      bottomPlayerWinning: "El jugador inferior va ganando el partido.",
-      drawOnSets: "El partido está empatado a sets.",
-      bye: "Descanso"
-    },
-    actions: {
-      toggleNavigation: "Mostrar u ocultar navegación",
-      closeDialog: "Cerrar diálogo",
-      createTournament: "Crear Torneo",
-      loadSamplePlayers: "Cargar Jugadores de Ejemplo",
-      generateNextRound: "Generar Siguiente Ronda",
-      completeAndSaveTournament: "Completar y Guardar Torneo",
-      savePlayers: "Guardar Jugadores",
-      loadPlayers: "Cargar Jugadores",
-      viewTournamentHistory: "Ver Historial de Torneos",
-      resetTournament: "Reiniciar Torneo",
-      exportStandingsCsv: "Exportar Clasificación CSV",
-      scrollToTop: "Volver arriba",
-      addSet: "Añadir Set",
-      removeSet: "Eliminar set",
-      saveResult: "Guardar resultado",
-      updateResult: "Actualizar resultado",
-      removePlayer: "Retirar Jugador",
-      cancel: "Cancelar",
-      close: "Cerrar",
-      keepPlayerList: "Mantener Lista de Jugadores",
-      clearEverything: "Borrar Todo",
-      loadGroupPlayers: "Cargar Jugadores",
-      delete: "Eliminar",
-      viewStandings: "Ver Clasificación",
-      back: "Volver",
-      savePlayersConfirm: "Guardar Jugadores"
-    },
-    placeholders: {
-      tournamentName: "Campeonato de Primavera",
-      participants: "Un jugador por línea",
-      groupName: "Jugadores del Club"
-    },
-    empty: {
-      leaderboard: "Crea un torneo para ver la clasificación.",
-      globalRanking: "Los torneos archivados rellenarán este ranking.",
-      playersManager: "Crea un torneo para gestionar participantes.",
-      historySelection: "Guarda torneos completados para construir un ranking global.",
-      noOpponents: "Sin rivales todavía",
-      selectArchived: "Selecciona al menos un torneo archivado."
-    },
-    modal: {
-      dialog: "Diálogo",
-      removePlayerTitle: "Retirar Jugador",
-      removePlayerBody: "¿Retirar a <strong>{name}</strong> del torneo actual?",
-      removePlayerHelp: "Los partidos completados se conservan. Los emparejamientos pendientes de la ronda actual se reconstruyen para mantener válido el sistema suizo.",
-      tournamentSavedTitle: "Torneo Guardado",
-      tournamentSavedBody: "<p><strong>{name}</strong> ya está guardado en el historial y disponible para el ranking global.</p>",
-      resetTitle: "Reiniciar Torneo",
-      resetBody: "Elige cómo quieres reiniciar el torneo actual.",
-      resetHelp: "Se borrarán todas las rondas, resultados y la clasificación en vivo. Puedes mantener la lista de jugadores para un nuevo evento o borrar todo.",
-      savePlayersTitle: "Guardar Jugadores",
-      savePlayersHelp: "Se guardarán {count} jugadores para torneos futuros.",
-      groupName: "Nombre del Grupo",
-      loadPlayersTitle: "Cargar Jugadores",
-      tournamentHistoryTitle: "Historial de Torneos"
-    },
-    alerts: {
-      enterTournamentName: "Introduce un nombre para el torneo.",
-      validPlayerCount: "Introduce un número válido de jugadores, al menos 2.",
-      playerCountMismatch: "El número de jugadores y la lista de participantes no coinciden. Se esperaban {count} jugadores.",
-      uniquePlayerNames: "Los nombres de los jugadores deben ser únicos dentro del torneo.",
-      createTournamentBeforeRounds: "Crea un torneo antes de generar rondas.",
-      atLeastTwoPlayers: "Se necesitan al menos dos jugadores activos para generar una ronda.",
-      saveResultsBeforeRound: "Guarda todos los resultados antes de generar la siguiente ronda.",
-      noValidPairings: "No se pudieron generar emparejamientos válidos.",
-      setScoresWholeNumbers: "Las puntuaciones de los sets deben ser números enteros mayores o iguales a 0.",
-      addSetBeforeSaving: "Añade al menos un set antes de guardar el resultado.",
-      setWinnerRequired: "Cada set debe tener un ganador. No se permiten empates en un set.",
-      createTournamentBeforeExport: "Crea un torneo antes de exportar la clasificación.",
-      createAndPlayBeforeArchive: "Crea y juega un torneo antes de archivarlo.",
-      finishRoundBeforeArchive: "Termina la ronda actual antes de guardar el torneo en el historial.",
-      atLeastOneCompletedMatch: "Se necesita al menos un partido completado antes de guardar un torneo.",
-      noTournamentDataReset: "No hay datos de torneo para reiniciar.",
-      addPlayersBeforeSave: "Añade jugadores antes de guardar una lista reutilizable.",
-      enterGroupName: "Introduce un nombre para el grupo.",
-      noSavedPlayerGroups: "Todavía no hay grupos de jugadores guardados.",
-      noSavedTournaments: "Todavía no se han guardado torneos."
-    },
-    notifications: {
-      languageChangedTitle: "Idioma",
-      languageChangedBodyEn: "Inglés activado.",
-      languageChangedBodyEs: "Español activado.",
-      tournamentCreatedTitle: "Torneo Creado",
-      tournamentCreatedBody: "{name} está listo para generar rondas.",
-      roundGeneratedTitle: "Ronda Generada",
-      roundGeneratedBody: "Los emparejamientos de la ronda {round} están listos.",
-      resultsSavedTitle: "Resultados Guardados",
-      resultsSavedBody: "El resultado del partido se actualizó correctamente.",
-      playerRemovedTitle: "Jugador Retirado",
-      playerRemovedBody: "{name} ha sido retirado de futuras rondas.",
-      tournamentArchivedTitle: "Torneo Archivado",
-      tournamentArchivedBody: "{name} se guardó en el historial.",
-      tournamentResetTitle: "Torneo Reiniciado",
-      tournamentResetKeepBody: "Se borraron las rondas y se mantuvo la lista de jugadores.",
-      tournamentResetClearBody: "Se borraron los datos del torneo.",
-      playersSavedTitle: "Jugadores Guardados",
-      playersSavedBody: "{name} ya está disponible para futuros torneos.",
-      playersLoadedTitle: "Jugadores Cargados",
-      playersLoadedBody: "{name} se cargó en la configuración.",
-      playerGroupDeletedTitle: "Grupo Eliminado",
-      playerGroupDeletedBody: "Se eliminó la lista guardada.",
-      historyDeletedTitle: "Entrada Eliminada",
-      historyDeletedBody: "Se eliminó el torneo archivado."
-    },
-    misc: {
-      playersShort: "jugadores",
-      roundsShort: "rondas",
-      savedOn: "guardado {date}",
-      pointsShort: "pts",
-      scoreLabel: "Puntuación",
-      winsLossesShort: "{wins}V-{losses}D",
-      sampleTournamentName: "Serie Nocturna Élite"
-    }
-  }
+  currentTournament: "torneos-viernes-state",
+  playerGroups: "torneos-viernes-player-groups",
+  tournamentHistory: "torneos-viernes-history",
+  playerRegistry: "torneos-viernes-player-registry",
+  selectedHistory: "torneos-viernes-selected-history"
 };
 
 const state = normalizeTournament(loadJson(STORAGE_KEYS.currentTournament, createEmptyTournament()));
 let playerGroups = normalizePlayerGroups(loadJson(STORAGE_KEYS.playerGroups, []));
 let tournamentHistory = normalizeTournamentHistory(loadJson(STORAGE_KEYS.tournamentHistory, []));
 let playerRegistry = normalizePlayerRegistry(loadJson(STORAGE_KEYS.playerRegistry, []));
-let selectedHistoryIds = Array.isArray(loadJson(STORAGE_KEYS.selectedHistory, []))
-  ? loadJson(STORAGE_KEYS.selectedHistory, [])
-  : [];
-let currentLanguage = resolveInitialLanguage();
+let selectedHistoryIds = Array.isArray(loadJson(STORAGE_KEYS.selectedHistory, [])) ? loadJson(STORAGE_KEYS.selectedHistory, []) : [];
 
 const elements = {
   tournamentForm: document.getElementById("tournamentForm"),
@@ -469,8 +24,8 @@ const elements = {
   exportCsvBtn: document.getElementById("exportCsvBtn"),
   savePlayersBtn: document.getElementById("savePlayersBtn"),
   loadPlayersBtn: document.getElementById("loadPlayersBtn"),
+  managePlayersBtn: document.getElementById("managePlayersBtn"),
   viewHistoryBtn: document.getElementById("viewHistoryBtn"),
-  playersManager: document.getElementById("playersManager"),
   pairingsContainer: document.getElementById("pairingsContainer"),
   pairingsScrollTopBtn: document.getElementById("pairingsScrollTopBtn"),
   pairingsSubtitle: document.getElementById("pairingsSubtitle"),
@@ -492,14 +47,11 @@ const elements = {
   modalCloseBtn: document.getElementById("modalCloseBtn"),
   toastStack: document.getElementById("toastStack"),
   sidebar: document.querySelector(".sidebar"),
-  sidebarToggleBtn: document.getElementById("sidebarToggleBtn"),
-  langEnBtn: document.getElementById("langEnBtn"),
-  langEsBtn: document.getElementById("langEsBtn")
+  sidebarToggleBtn: document.getElementById("sidebarToggleBtn")
 };
 
 bindEvents();
-initializeLayoutEnhancements();
-applyTranslations();
+initializeLayout();
 render();
 
 function bindEvents() {
@@ -511,16 +63,18 @@ function bindEvents() {
   elements.exportCsvBtn.addEventListener("click", exportStandingsCsv);
   elements.savePlayersBtn.addEventListener("click", openSavePlayersDialog);
   elements.loadPlayersBtn.addEventListener("click", openLoadPlayersDialog);
+  elements.managePlayersBtn.addEventListener("click", openPlayersManagerDialog);
   elements.viewHistoryBtn.addEventListener("click", openTournamentHistoryDialog);
   elements.modalCloseBtn.addEventListener("click", closeModal);
+  
   elements.pairingsScrollTopBtn.addEventListener("click", () => {
     elements.pairingsContainer.scrollTo({ top: 0, behavior: "smooth" });
   });
+  
   elements.pairingsContainer.addEventListener("scroll", updatePairingsScrollButton);
+  
   elements.modalOverlay.addEventListener("click", (event) => {
-    if (event.target === elements.modalOverlay) {
-      closeModal();
-    }
+    if (event.target === elements.modalOverlay) closeModal();
   });
 
   document.querySelectorAll(".nav-link").forEach((link) => {
@@ -528,35 +82,14 @@ function bindEvents() {
       document.querySelectorAll(".nav-link").forEach((item) => item.classList.remove("active"));
       link.classList.add("active");
       const targetSection = document.querySelector(link.getAttribute("href"));
-      if (targetSection) {
-        spotlightSection(targetSection);
-      }
-      if (window.innerWidth <= 640) {
-        elements.sidebar.classList.add("is-collapsed");
-      }
-    });
-
-    link.addEventListener("keydown", (event) => {
-      const navLinks = [...document.querySelectorAll(".nav-link")];
-      const currentIndex = navLinks.indexOf(link);
-      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
-        event.preventDefault();
-        navLinks[(currentIndex + 1) % navLinks.length].focus();
-      }
-
-      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
-        event.preventDefault();
-        navLinks[(currentIndex - 1 + navLinks.length) % navLinks.length].focus();
-      }
+      if (targetSection) spotlightSection(targetSection);
+      if (window.innerWidth <= 768) elements.sidebar.classList.add("is-collapsed");
     });
   });
 
   elements.sidebarToggleBtn.addEventListener("click", () => {
     elements.sidebar.classList.toggle("is-collapsed");
   });
-
-  elements.langEnBtn.addEventListener("click", () => setLanguage("en"));
-  elements.langEsBtn.addEventListener("click", () => setLanguage("es"));
 }
 
 function createEmptyTournament() {
@@ -586,80 +119,20 @@ function normalizeTournament(rawTournament) {
             removedRound: Number.isInteger(player.removedRound) ? player.removedRound : null
           }))
       : [],
-    rounds: Array.isArray(tournament.rounds)
-      ? tournament.rounds.map((round, roundIndex) => ({
-          roundNumber: Number.isInteger(round.roundNumber) ? round.roundNumber : roundIndex + 1,
-          matches: Array.isArray(round.matches)
-            ? round.matches.map((match, matchIndex) => ({
-                id: match.id || `round-${roundIndex + 1}-match-${matchIndex + 1}`,
-                table: Number.isInteger(match.table) ? match.table : matchIndex + 1,
-                player1Id: match.player1Id || null,
-                player2Id: match.player2Id || null,
-                result: match.result
-                  ? {
-                      sets: Array.isArray(match.result.sets)
-                        ? match.result.sets
-                            .filter((set) => set)
-                            .map((set) => ({
-                              player1Score: Number(set.player1Score) || 0,
-                              player2Score: Number(set.player2Score) || 0
-                            }))
-                        : [],
-                      player1Score: Number(match.result.player1Score) || 0,
-                      player2Score: Number(match.result.player2Score) || 0,
-                      completed: Boolean(match.result.completed),
-                      isBye: Boolean(match.result.isBye)
-                    }
-                  : null
-              }))
-            : []
-        }))
-      : []
+    rounds: Array.isArray(tournament.rounds) ? tournament.rounds : []
   };
 }
 
 function normalizePlayerGroups(rawGroups) {
-  return Array.isArray(rawGroups)
-    ? rawGroups
-        .filter((group) => group && group.id && group.name && Array.isArray(group.players))
-        .map((group) => ({
-          id: group.id,
-          name: group.name,
-          createdAt: group.createdAt || new Date().toISOString(),
-          players: group.players.filter((player) => player && player.id && player.name).map((player) => ({
-            id: player.id,
-            name: player.name
-          }))
-        }))
-    : [];
+  return Array.isArray(rawGroups) ? rawGroups.filter((group) => group && group.id && group.name && Array.isArray(group.players)) : [];
 }
 
 function normalizeTournamentHistory(rawHistory) {
-  return Array.isArray(rawHistory)
-    ? rawHistory
-        .filter((entry) => entry && entry.id && entry.tournamentName)
-        .map((entry) => ({
-          id: entry.id,
-          tournamentName: entry.tournamentName,
-          createdAt: entry.createdAt || new Date().toISOString(),
-          archivedAt: entry.archivedAt || new Date().toISOString(),
-          rounds: Array.isArray(entry.rounds) ? entry.rounds : [],
-          players: Array.isArray(entry.players) ? entry.players : [],
-          finalStandings: Array.isArray(entry.finalStandings) ? entry.finalStandings : []
-        }))
-    : [];
+  return Array.isArray(rawHistory) ? rawHistory.filter((entry) => entry && entry.id && entry.tournamentName) : [];
 }
 
 function normalizePlayerRegistry(rawRegistry) {
-  return Array.isArray(rawRegistry)
-    ? rawRegistry
-        .filter((entry) => entry && entry.id && entry.name)
-        .map((entry) => ({
-          id: entry.id,
-          name: entry.name,
-          normalizedName: entry.normalizedName || normalizeName(entry.name)
-        }))
-    : [];
+  return Array.isArray(rawRegistry) ? rawRegistry.filter((entry) => entry && entry.id && entry.name) : [];
 }
 
 function loadJson(key, fallbackValue) {
@@ -667,108 +140,9 @@ function loadJson(key, fallbackValue) {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : fallbackValue;
   } catch (error) {
-    console.error(`Failed to load ${key}`, error);
+    console.error(`Error cargando ${key}`, error);
     return fallbackValue;
   }
-}
-
-function resolveInitialLanguage() {
-  const savedLanguage = localStorage.getItem(STORAGE_KEYS.language);
-  if (savedLanguage && TRANSLATIONS[savedLanguage]) {
-    return savedLanguage;
-  }
-
-  const browserLanguage = (navigator.language || "en").toLowerCase();
-  return browserLanguage.startsWith("es") ? "es" : "en";
-}
-
-function saveLanguage() {
-  localStorage.setItem(STORAGE_KEYS.language, currentLanguage);
-}
-
-function t(key, params = {}) {
-  const source = getNestedTranslation(TRANSLATIONS[currentLanguage], key)
-    ?? getNestedTranslation(TRANSLATIONS.en, key)
-    ?? key;
-
-  return String(source).replace(/\{(\w+)\}/g, (_, paramKey) => String(params[paramKey] ?? `{${paramKey}}`));
-}
-
-function getNestedTranslation(object, path) {
-  return path.split(".").reduce((value, segment) => (value && segment in value ? value[segment] : null), object);
-}
-
-function setLanguage(language) {
-  if (!TRANSLATIONS[language] || language === currentLanguage) {
-    return;
-  }
-
-  currentLanguage = language;
-  saveLanguage();
-  closeModal();
-  applyTranslations();
-  render();
-  return showToast(t("notifications.languageChangedTitle"), language === "es" ? t("notifications.languageChangedBodyEs") : t("notifications.languageChangedBodyEn"), "info");
-  showToast(
-    language === "es" ? "Idioma" : "Language",
-    language === "es" ? "Español activado." : "English enabled.",
-    "info"
-  );
-}
-
-function applyTranslations() {
-  document.documentElement.lang = currentLanguage;
-  document.querySelectorAll("[data-i18n]").forEach((node) => {
-    node.textContent = t(node.dataset.i18n);
-    animateTranslationNode(node);
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
-    node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
-  });
-
-  document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
-    node.setAttribute("aria-label", t(node.dataset.i18nAriaLabel));
-  });
-
-  document.title = t("hero.title");
-  updateLanguageButtons();
-  updateActiveSectionLabel();
-  updateCollapseButtonLabels();
-}
-
-function updateLanguageButtons() {
-  elements.langEnBtn.classList.toggle("active", currentLanguage === "en");
-  elements.langEsBtn.classList.toggle("active", currentLanguage === "es");
-  elements.langEnBtn.setAttribute("aria-pressed", String(currentLanguage === "en"));
-  elements.langEsBtn.setAttribute("aria-pressed", String(currentLanguage === "es"));
-  elements.langEnBtn.setAttribute("title", t("language.en"));
-  elements.langEsBtn.setAttribute("title", t("language.es"));
-}
-
-function updateActiveSectionLabel() {
-  const activeLink = document.querySelector(".nav-link.active");
-  if (activeLink) {
-    elements.activeSectionLabel.textContent = activeLink.textContent.trim();
-  }
-}
-
-function updateCollapseButtonLabels() {
-  document.querySelectorAll(".panel").forEach((panel) => {
-    const collapseButton = panel.querySelector(".collapse-btn");
-    const headingTitle = panel.querySelector(".section-heading h2");
-    if (!collapseButton || !headingTitle) {
-      return;
-    }
-
-    collapseButton.setAttribute("aria-label", `${t("actions.toggleNavigation")}: ${headingTitle.textContent}`);
-  });
-}
-
-function animateTranslationNode(node) {
-  node.classList.remove("i18n-fade");
-  void node.offsetWidth;
-  node.classList.add("i18n-fade");
 }
 
 function saveCurrentTournament() {
@@ -796,33 +170,18 @@ function render() {
   hydrateForm();
   renderHero(derived);
   renderControls(derived);
-  renderPlayersManager(derived);
   renderPairings(derived);
   renderLeaderboard(derived);
   renderGlobalRankingSection();
 }
 
-function initializeLayoutEnhancements() {
-  prepareCollapsiblePanels();
-  observeSections();
-
-  if (window.innerWidth <= 640) {
-    elements.sidebar.classList.add("is-collapsed");
-  }
-}
-
-function prepareCollapsiblePanels() {
+function initializeLayout() {
   document.querySelectorAll(".panel").forEach((panel) => {
     const heading = panel.querySelector(".section-heading");
-    if (!heading || heading.dataset.enhanced === "true") {
-      return;
-    }
-
-    heading.dataset.enhanced = "true";
+    if (!heading) return;
+    
     const headingTitle = heading.querySelector("h2");
-    if (!headingTitle) {
-      return;
-    }
+    if (!headingTitle) return;
 
     const row = document.createElement("div");
     row.className = "section-heading-row";
@@ -832,8 +191,6 @@ function prepareCollapsiblePanels() {
     const collapseButton = document.createElement("button");
     collapseButton.type = "button";
     collapseButton.className = "icon-btn collapse-btn";
-    collapseButton.setAttribute("aria-expanded", "true");
-    collapseButton.setAttribute("aria-label", `${t("actions.toggleNavigation")}: ${headingTitle.textContent}`);
     collapseButton.textContent = "−";
     row.appendChild(collapseButton);
 
@@ -849,141 +206,65 @@ function prepareCollapsiblePanels() {
     collapseButton.addEventListener("click", () => {
       const collapsed = panel.classList.toggle("collapsed");
       collapseButton.textContent = collapsed ? "+" : "−";
-      collapseButton.setAttribute("aria-expanded", String(!collapsed));
     });
   });
-}
 
-function observeSections() {
-  const navLinks = [...document.querySelectorAll(".nav-link")];
-  const sectionMap = navLinks
-    .map((link) => {
-      const target = document.querySelector(link.getAttribute("href"));
-      return target ? { link, target, label: link.textContent.trim() } : null;
-    })
-    .filter(Boolean);
-
-  if (!sectionMap.length) {
-    return;
+  if (window.innerWidth <= 768) {
+    elements.sidebar.classList.add("is-collapsed");
   }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visibleEntries = entries.filter((entry) => entry.isIntersecting);
-      if (!visibleEntries.length) {
-        return;
-      }
-
-      const activeEntry = visibleEntries.sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
-      const match = sectionMap.find((item) => item.target === activeEntry.target);
-      if (!match) {
-        return;
-      }
-
-      navLinks.forEach((link) => link.classList.remove("active"));
-      match.link.classList.add("active");
-      elements.activeSectionLabel.textContent = match.label;
-    },
-    { threshold: [0.2, 0.45, 0.7] }
-  );
-
-  sectionMap.forEach((item) => observer.observe(item.target));
 }
 
 function spotlightSection(section) {
   section.classList.remove("section-spotlight");
   void section.offsetWidth;
   section.classList.add("section-spotlight");
-  window.setTimeout(() => section.classList.remove("section-spotlight"), 850);
+  setTimeout(() => section.classList.remove("section-spotlight"), 850);
 }
 
 function hydrateForm() {
-  if (!state.players.length) {
-    return;
-  }
-
+  if (!state.players.length) return;
   elements.tournamentName.value = state.tournamentName;
   elements.playerCount.value = String(state.players.length);
   elements.participants.value = state.players.map((player) => player.name).join("\n");
 }
 
 function renderHero(derived) {
-  elements.activeTournamentName.textContent = state.tournamentName || t("status.notCreated");
+  elements.activeTournamentName.textContent = state.tournamentName || "No Creado";
   elements.activeRoundNumber.textContent = String(Math.max(state.currentRoundIndex + 1, 0));
   elements.activePlayerCount.textContent = String(derived.activePlayers.length);
 }
 
 function renderControls(derived) {
   const currentRound = state.rounds[state.currentRoundIndex];
-  const completedMatches = currentRound
-    ? currentRound.matches.filter((match) => match.result && match.result.completed).length
-    : 0;
+  const completedMatches = currentRound ? currentRound.matches.filter((match) => match.result && match.result.completed).length : 0;
 
-  elements.completedMatchesLabel.textContent = currentRound
-    ? `${completedMatches}/${currentRound.matches.length}`
-    : "0";
+  elements.completedMatchesLabel.textContent = currentRound ? `${completedMatches}/${currentRound.matches.length}` : "0";
 
   if (!state.players.length) {
-    elements.statusLabel.textContent = t("status.waitingForSetup");
+    elements.statusLabel.textContent = "Esperando configuración";
   } else if (!currentRound) {
-    elements.statusLabel.textContent = t("status.readyRound1");
+    elements.statusLabel.textContent = "Listo para generar ronda 1";
   } else {
     elements.statusLabel.textContent = isRoundComplete(currentRound)
-      ? t("status.roundComplete", { round: currentRound.roundNumber })
-      : t("status.roundInProgress", { round: currentRound.roundNumber });
+      ? `Ronda ${currentRound.roundNumber} completada`
+      : `Ronda ${currentRound.roundNumber} en curso`;
   }
 
   elements.statusLabelSidebar.textContent = elements.statusLabel.textContent;
-}
-
-function renderPlayersManager(derived) {
-  if (!state.players.length) {
-    elements.playersManager.className = "players-manager empty-state";
-    elements.playersManager.textContent = t("empty.playersManager");
-    return;
-  }
-
-  elements.playersManager.className = "players-manager";
-  elements.playersManager.innerHTML = "";
-
-  state.players.forEach((player) => {
-    const stats = derived.statsById.get(player.id);
-    const row = document.createElement("div");
-    row.className = `player-management-row ${player.status === "removed" ? "removed" : ""}`.trim();
-
-    row.innerHTML = `
-      <div class="player-management-meta">
-        <strong>${escapeHtml(player.name)}</strong>
-        <span class="muted-copy">${formatTournamentPoints(stats.points)} ${t("misc.pointsShort")} - ${t("misc.winsLossesShort", { wins: stats.wins, losses: stats.losses })} - ${t("misc.scoreLabel")} ${formatDifference(stats.scoreFor - stats.scoreAgainst)}</span>
-      </div>
-      <div class="actions">
-        <span class="status-pill ${player.status === "removed" ? "removed" : "active"}">${player.status === "removed" ? t("status.withdrawn") : t("status.active")}</span>
-        <button type="button" class="btn ${player.status === "removed" ? "btn-secondary" : "btn-danger"} remove-player-btn" data-player-id="${player.id}" ${player.status === "removed" ? "disabled" : ""}>
-          ${player.status === "removed" ? t("status.removed") : t("actions.removePlayer")}
-        </button>
-      </div>
-    `;
-
-    elements.playersManager.appendChild(row);
-  });
-
-  elements.playersManager.querySelectorAll(".remove-player-btn").forEach((button) => {
-    button.addEventListener("click", () => openRemovePlayerDialog(button.dataset.playerId));
-  });
 }
 
 function renderPairings(derived) {
   const round = state.rounds[state.currentRoundIndex];
 
   if (!round) {
-    elements.pairingsSubtitle.textContent = t("pairings.noneGenerated");
+    elements.pairingsSubtitle.textContent = "Aún no se ha generado ninguna ronda.";
     elements.pairingsContainer.className = "pairings-container empty-state";
-    elements.pairingsContainer.textContent = t("pairings.generateToView");
+    elements.pairingsContainer.textContent = "Genera una ronda para ver las tarjetas de partido.";
     updatePairingsScrollButton();
     return;
   }
 
-  elements.pairingsSubtitle.textContent = t("pairings.roundLiveResults", { round: round.roundNumber });
+  elements.pairingsSubtitle.textContent = `Emparejamientos y resultados en vivo de la ronda ${round.roundNumber}.`;
   elements.pairingsContainer.className = "pairings-container";
   elements.pairingsContainer.innerHTML = "";
 
@@ -1006,39 +287,30 @@ function renderPairings(derived) {
     const previewPoints = card.querySelector(".preview-points");
     const previewAward = card.querySelector(".preview-award");
 
-    card.querySelector(".versus").textContent = t("match.vs");
-    card.querySelector(".sets-header strong").textContent = t("match.setScores");
-    card.querySelector(".add-set-btn").textContent = t("actions.addSet");
-    card.querySelector(".preview-label").textContent = t("match.livePreview");
-    card.querySelector(".preview-summary").textContent = t("match.addSetsToCalculate");
-    card.querySelector(".preview-chip:nth-child(1) .chip-label").textContent = t("table.sets");
-    card.querySelector(".preview-chip:nth-child(2) .chip-label").textContent = t("table.points");
-    card.querySelector(".preview-chip:nth-child(3) .chip-label").textContent = t("table.scoring");
-
-    badge.textContent = t("match.tableLabel", { table: match.table });
-    status.textContent = match.result && match.result.completed ? t("status.saved") : t("status.pending");
+    badge.textContent = `Mesa ${match.table}`;
+    status.textContent = match.result && match.result.completed ? "Guardado" : "Pendiente";
     card.classList.toggle("completed", Boolean(match.result && match.result.completed));
 
-    playerNames[0].textContent = player1 ? player1.name : t("status.unknown");
-    playerPoints[0].textContent = `${formatTournamentPoints(player1Stats.points)} ${t("misc.pointsShort")}`;
+    playerNames[0].textContent = player1 ? player1.name : "Desconocido";
+    playerPoints[0].textContent = `${formatTournamentPoints(player1Stats.points)} pts`;
 
     if (!player2) {
-      playerNames[1].textContent = t("match.bye");
-      playerPoints[1].innerHTML = `<span class="bye-pill">${t("match.automaticWin")}</span>`;
-      setsList.innerHTML = `<div class="set-row"><span class="set-label">${t("match.bye")}</span><span class="muted-copy">${t("match.noSetEntryRequired")}</span></div>`;
-      previewSummary.textContent = t("match.automaticMatchWinApplied");
+      playerNames[1].textContent = "Descanso";
+      playerPoints[1].innerHTML = `<span class="bye-pill">Victoria automática</span>`;
+      setsList.innerHTML = `<div class="set-row"><span class="set-label">Descanso</span><span class="muted-copy">No es necesario introducir sets.</span></div>`;
+      previewSummary.textContent = "Victoria automática aplicada.";
       previewSets.textContent = "0 - 0";
       previewPoints.textContent = "0 - 0";
       previewAward.textContent = "2.00 - 0.00";
       addSetButton.disabled = true;
       saveButton.disabled = true;
-      saveButton.textContent = t("match.byeApplied");
-      status.textContent = t("status.completed");
+      saveButton.textContent = "Descanso Aplicado";
+      status.textContent = "Completado";
       card.classList.add("completed");
     } else {
       playerNames[1].textContent = player2.name;
-      playerPoints[1].textContent = `${formatTournamentPoints(player2Stats.points)} ${t("misc.pointsShort")}`;
-      saveButton.textContent = match.result && match.result.completed ? t("actions.updateResult") : t("actions.saveResult");
+      playerPoints[1].textContent = `${formatTournamentPoints(player2Stats.points)} pts`;
+      saveButton.textContent = match.result && match.result.completed ? "Actualizar Resultado" : "Guardar Resultado";
       const editableSets = getEditableSets(match);
       renderSetRows(card, editableSets);
       addSetButton.addEventListener("click", () => {
@@ -1049,7 +321,6 @@ function renderPairings(derived) {
 
     if (player2) {
       updateMatchPreview(card);
-
       if (match.result && match.result.completed) {
         const summary = summarizeMatchResult(match.result);
         applyWinnerClasses(playerRows, summary.setsWonPlayer1, summary.setsWonPlayer2);
@@ -1065,7 +336,7 @@ function renderPairings(derived) {
 
 function renderLeaderboard(derived) {
   if (!state.players.length) {
-    elements.leaderboardBody.innerHTML = `<tr><td colspan="9" class="table-empty">${t("empty.leaderboard")}</td></tr>`;
+    elements.leaderboardBody.innerHTML = `<tr><td colspan="9" class="table-empty">Crea un torneo para ver la clasificación.</td></tr>`;
     return;
   }
 
@@ -1073,14 +344,14 @@ function renderLeaderboard(derived) {
     .map((player, index) => {
       const stats = derived.statsById.get(player.id);
       const opposition = stats.opponents.length
-        ? stats.opponents.map((opponentId) => getPlayerById(opponentId)?.name || t("status.unknown")).join(", ")
-        : t("empty.noOpponents");
+        ? stats.opponents.map((opponentId) => getPlayerById(opponentId)?.name || "Desconocido").join(", ")
+        : "Sin rivales todavía";
 
       return `
         <tr class="${player.status === "removed" ? "withdrawn-row" : ""}">
           <td>${index + 1}</td>
           <td>${escapeHtml(player.name)}</td>
-          <td><span class="status-pill ${player.status === "removed" ? "removed" : "active"}">${player.status === "removed" ? t("status.withdrawn") : t("status.active")}</span></td>
+          <td><span class="status-pill ${player.status === "removed" ? "removed" : "active"}">${player.status === "removed" ? "Retirado" : "Activo"}</span></td>
           <td>${formatTournamentPoints(stats.points)}</td>
           <td>${stats.wins}</td>
           <td>${stats.losses}</td>
@@ -1096,8 +367,8 @@ function renderLeaderboard(derived) {
 function renderGlobalRankingSection() {
   if (!tournamentHistory.length) {
     elements.historySelection.className = "history-selection empty-state";
-    elements.historySelection.textContent = t("empty.historySelection");
-    elements.globalRankingBody.innerHTML = `<tr><td colspan="8" class="table-empty">${t("empty.globalRanking")}</td></tr>`;
+    elements.historySelection.textContent = "Guarda torneos completados para construir un ranking global.";
+    elements.globalRankingBody.innerHTML = `<tr><td colspan="8" class="table-empty">Los torneos archivados rellenarán este ranking.</td></tr>`;
     return;
   }
 
@@ -1112,7 +383,7 @@ function renderGlobalRankingSection() {
       <input type="checkbox" data-history-id="${tournament.id}" ${selectedHistoryIds.includes(tournament.id) ? "checked" : ""}>
       <span>
         <strong>${escapeHtml(tournament.tournamentName)}</strong><br>
-        <span class="muted-copy">${formatDate(tournament.archivedAt)} - ${tournament.finalStandings.length} ${t("misc.playersShort")} - ${tournament.rounds.length} ${t("misc.roundsShort")}</span>
+        <span class="muted-copy">${formatDate(tournament.archivedAt)} - ${tournament.finalStandings.length} jugadores - ${tournament.rounds.length} rondas</span>
       </span>
     `;
     list.appendChild(wrapper);
@@ -1152,7 +423,7 @@ function renderGlobalRankingSection() {
           `
         )
         .join("")
-    : `<tr><td colspan="8" class="table-empty">${t("empty.selectArchived")}</td></tr>`;
+    : `<tr><td colspan="8" class="table-empty">Selecciona al menos un torneo archivado.</td></tr>`;
 }
 
 function handleCreateTournament(event) {
@@ -1166,23 +437,23 @@ function handleCreateTournament(event) {
   const playerCount = Number(elements.playerCount.value);
 
   if (!tournamentName) {
-    alert(t("alerts.enterTournamentName"));
+    alert("Por favor, introduce un nombre para el torneo.");
     return;
   }
 
   if (!Number.isInteger(playerCount) || playerCount < 2) {
-    alert(t("alerts.validPlayerCount"));
+    alert("Por favor, introduce un número válido de jugadores (mínimo 2).");
     return;
   }
 
   if (participantNames.length !== playerCount) {
-    alert(t("alerts.playerCountMismatch", { count: playerCount }));
+    alert(`El número de jugadores y la lista de participantes no coinciden. Se esperaban ${playerCount} jugadores.`);
     return;
   }
 
   const uniqueNames = new Set(participantNames.map((name) => name.toLowerCase()));
   if (uniqueNames.size !== participantNames.length) {
-    alert(t("alerts.uniquePlayerNames"));
+    alert("Los nombres de los jugadores deben ser únicos dentro del torneo.");
     return;
   }
 
@@ -1194,8 +465,7 @@ function handleCreateTournament(event) {
 
   saveCurrentTournament();
   render();
-  animateRefresh([elements.tournamentForm, elements.playersManager, elements.leaderboardBody]);
-  showToast(t("notifications.tournamentCreatedTitle"), t("notifications.tournamentCreatedBody", { name: tournamentName }), "success");
+  showToast("Torneo Creado", `${tournamentName} está listo para generar rondas.`, "success");
 }
 
 function createPlayerEntry(name) {
@@ -1221,26 +491,26 @@ function loadSamplePlayers() {
     "Mia Petrov"
   ];
 
-  elements.tournamentName.value = t("misc.sampleTournamentName");
+  elements.tournamentName.value = "Serie Nocturna Élite";
   elements.playerCount.value = String(samplePlayers.length);
   elements.participants.value = samplePlayers.join("\n");
 }
 
 function handleGenerateRound() {
   if (!state.players.length) {
-    alert(t("alerts.createTournamentBeforeRounds"));
+    alert("Crea un torneo antes de generar rondas.");
     return;
   }
 
   const activePlayers = state.players.filter((player) => player.status === "active");
   if (activePlayers.length < 2) {
-    alert(t("alerts.atLeastTwoPlayers"));
+    alert("Se necesitan al menos dos jugadores activos para generar una ronda.");
     return;
   }
 
   const currentRound = state.rounds[state.currentRoundIndex];
   if (currentRound && !isRoundComplete(currentRound)) {
-    alert(t("alerts.saveResultsBeforeRound"));
+    alert("Guarda todos los resultados antes de generar la siguiente ronda.");
     return;
   }
 
@@ -1249,7 +519,7 @@ function handleGenerateRound() {
   const pairings = generateSwissPairings(activePlayers, roundNumber, derived.statsById);
 
   if (!pairings.length) {
-    alert(t("alerts.noValidPairings"));
+    alert("No se pudieron generar emparejamientos válidos.");
     return;
   }
 
@@ -1261,20 +531,15 @@ function handleGenerateRound() {
 
   saveCurrentTournament();
   render();
-  animateRefresh([elements.pairingsContainer, elements.leaderboardBody]);
-  showToast(t("notifications.roundGeneratedTitle"), t("notifications.roundGeneratedBody", { round: roundNumber }), "success");
+  showToast("Ronda Generada", `Los emparejamientos de la ronda ${roundNumber} están listos.`, "success");
 }
 
 function saveMatchResult(matchId, card) {
   const round = state.rounds[state.currentRoundIndex];
-  if (!round) {
-    return;
-  }
+  if (!round) return;
 
   const match = round.matches.find((entry) => entry.id === matchId);
-  if (!match) {
-    return;
-  }
+  if (!match) return;
 
   const sets = normalizeEnteredSets(collectSetsFromCard(card));
   const validation = validateSets(sets);
@@ -1294,25 +559,60 @@ function saveMatchResult(matchId, card) {
 
   saveCurrentTournament();
   render();
-  animateRefresh([elements.pairingsContainer, elements.leaderboardBody]);
-  showToast(t("notifications.resultsSavedTitle"), t("notifications.resultsSavedBody"), "success");
+  showToast("Resultados Guardados", "El resultado del partido se actualizó correctamente.", "success");
+}
+
+function openPlayersManagerDialog() {
+  if (!state.players.length) {
+    alert("Crea un torneo antes de gestionar participantes.");
+    return;
+  }
+
+  const derived = deriveTournamentData();
+  let playersHtml = "";
+
+  state.players.forEach((player) => {
+    const stats = derived.statsById.get(player.id);
+    playersHtml += `
+      <div class="player-management-row ${player.status === "removed" ? "removed" : ""}">
+        <div class="player-management-meta">
+          <strong>${escapeHtml(player.name)}</strong>
+          <span class="muted-copy">${formatTournamentPoints(stats.points)} pts - ${stats.wins}V-${stats.losses}D - ${formatDifference(stats.setsWon - stats.setsLost)} sets</span>
+        </div>
+        <div class="actions">
+          <span class="status-pill ${player.status === "removed" ? "removed" : "active"}">${player.status === "removed" ? "Retirado" : "Activo"}</span>
+          <button type="button" class="btn ${player.status === "removed" ? "btn-secondary" : "btn-danger"} remove-player-btn" data-player-id="${player.id}" ${player.status === "removed" ? "disabled" : ""}>
+            ${player.status === "removed" ? "Eliminado" : "Retirar Jugador"}
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  openModal({
+    title: "Gestión de Jugadores",
+    body: `<div class="modal-list">${playersHtml}</div>`,
+    actions: [{ label: "Cerrar", className: "btn-secondary", onClick: closeModal }]
+  });
+
+  elements.modalBody.querySelectorAll(".remove-player-btn").forEach((button) => {
+    button.addEventListener("click", () => openRemovePlayerDialog(button.dataset.playerId));
+  });
 }
 
 function openRemovePlayerDialog(playerId) {
   const player = getPlayerById(playerId);
-  if (!player) {
-    return;
-  }
+  if (!player) return;
 
   openModal({
-    title: t("modal.removePlayerTitle"),
+    title: "Retirar Jugador",
     body: `
-      <p>${t("modal.removePlayerBody", { name: escapeHtml(player.name) })}</p>
-      <p class="muted-copy">${t("modal.removePlayerHelp")}</p>
+      <p>¿Retirar a <strong>${escapeHtml(player.name)}</strong> del torneo actual?</p>
+      <p class="muted-copy">Los partidos completados se conservan. Los emparejamientos pendientes de la ronda actual se reconstruyen para mantener válido el sistema suizo.</p>
     `,
     actions: [
-      { label: t("actions.cancel"), className: "btn-secondary", onClick: closeModal },
-      { label: t("actions.removePlayer"), className: "btn-danger", onClick: () => removePlayer(playerId) }
+      { label: "Cancelar", className: "btn-secondary", onClick: closeModal },
+      { label: "Retirar Jugador", className: "btn-danger", onClick: () => removePlayer(playerId) }
     ]
   });
 }
@@ -1332,26 +632,25 @@ function removePlayer(playerId) {
   saveCurrentTournament();
   closeModal();
   render();
-  animateRefresh([elements.playersManager, elements.pairingsContainer, elements.leaderboardBody]);
-  showToast(t("notifications.playerRemovedTitle"), t("notifications.playerRemovedBody", { name: player.name }), "warning");
+  showToast("Jugador Retirado", `${player.name} ha sido retirado de futuras rondas.`, "warning");
 }
 
 function archiveTournament() {
   if (!state.players.length) {
-    alert(t("alerts.createAndPlayBeforeArchive"));
+    alert("Crea y juega un torneo antes de archivarlo.");
     return;
   }
 
   const currentRound = state.rounds[state.currentRoundIndex];
   if (currentRound && !isRoundComplete(currentRound)) {
-    alert(t("alerts.finishRoundBeforeArchive"));
+    alert("Termina la ronda actual antes de guardar el torneo en el historial.");
     return;
   }
 
   const derived = deriveTournamentData();
   const completedMatches = state.rounds.flatMap((round) => round.matches).filter((match) => match.result && match.result.completed);
   if (!completedMatches.length) {
-    alert(t("alerts.atLeastOneCompletedMatch"));
+    alert("Se necesita al menos un partido completado antes de guardar un torneo.");
     return;
   }
 
@@ -1383,32 +682,31 @@ function archiveTournament() {
   saveTournamentHistory();
   saveCurrentTournament();
   render();
-  animateRefresh([elements.historySelection, elements.globalRankingBody]);
 
   openModal({
-    title: t("modal.tournamentSavedTitle"),
-    body: t("modal.tournamentSavedBody", { name: escapeHtml(snapshot.tournamentName) }),
-    actions: [{ label: t("actions.close"), className: "btn-primary", onClick: closeModal }]
+    title: "Torneo Guardado",
+    body: `<p><strong>${escapeHtml(snapshot.tournamentName)}</strong> ya está guardado en el historial y disponible para el ranking global.</p>`,
+    actions: [{ label: "Cerrar", className: "btn-primary", onClick: closeModal }]
   });
-  showToast(t("notifications.tournamentArchivedTitle"), t("notifications.tournamentArchivedBody", { name: snapshot.tournamentName }), "success");
+  showToast("Torneo Archivado", `${snapshot.tournamentName} se guardó en el historial.`, "success");
 }
 
 function openResetDialog() {
   if (!state.players.length && !elements.participants.value.trim()) {
-    alert(t("alerts.noTournamentDataReset"));
+    alert("No hay datos de torneo para reiniciar.");
     return;
   }
 
   openModal({
-    title: t("modal.resetTitle"),
+    title: "Reiniciar Torneo",
     body: `
-      <p>${t("modal.resetBody")}</p>
-      <p class="muted-copy">${t("modal.resetHelp")}</p>
+      <p>Elige cómo quieres reiniciar el torneo actual.</p>
+      <p class="muted-copy">Se borrarán todas las rondas, resultados y la clasificación en vivo. Puedes mantener la lista de jugadores para un nuevo evento o borrar todo.</p>
     `,
     actions: [
-      { label: t("actions.cancel"), className: "btn-secondary", onClick: closeModal },
-      { label: t("actions.keepPlayerList"), className: "btn-secondary", onClick: () => resetTournament(true) },
-      { label: t("actions.clearEverything"), className: "btn-danger", onClick: () => resetTournament(false) }
+      { label: "Cancelar", className: "btn-secondary", onClick: closeModal },
+      { label: "Mantener Lista de Jugadores", className: "btn-secondary", onClick: () => resetTournament(true) },
+      { label: "Borrar Todo", className: "btn-danger", onClick: () => resetTournament(false) }
     ]
   });
 }
@@ -1428,13 +726,7 @@ function resetTournament(keepPlayers) {
 
   closeModal();
   render();
-  animateRefresh([
-    elements.playersManager,
-    elements.pairingsContainer,
-    elements.leaderboardBody,
-    elements.historySelection
-  ]);
-  showToast(t("notifications.tournamentResetTitle"), keepPlayers ? t("notifications.tournamentResetKeepBody") : t("notifications.tournamentResetClearBody"), "info");
+  showToast("Torneo Reiniciado", keepPlayers ? "Se borraron las rondas y se mantuvo la lista de jugadores." : "Se borraron todos los datos del torneo.", "info");
 }
 
 function openSavePlayersDialog() {
@@ -1450,30 +742,30 @@ function openSavePlayersDialog() {
         });
 
   if (!playersToSave.length) {
-    alert(t("alerts.addPlayersBeforeSave"));
+    alert("Añade jugadores antes de guardar una lista reutilizable.");
     return;
   }
 
   openModal({
-    title: t("modal.savePlayersTitle"),
+    title: "Guardar Jugadores",
     body: `
       <form id="savePlayersForm" class="inline-form">
         <label class="field">
-          <span>${t("modal.groupName")}</span>
-          <input id="playerGroupName" type="text" placeholder="${t("placeholders.groupName")}">
+          <span>Nombre del Grupo</span>
+          <input id="playerGroupName" type="text" placeholder="Jugadores del Club">
         </label>
-        <p class="muted-copy">${t("modal.savePlayersHelp", { count: playersToSave.length })}</p>
+        <p class="muted-copy">Se guardarán ${playersToSave.length} jugadores para torneos futuros.</p>
       </form>
     `,
     actions: [
-      { label: t("actions.cancel"), className: "btn-secondary", onClick: closeModal },
+      { label: "Cancelar", className: "btn-secondary", onClick: closeModal },
       {
-        label: t("actions.savePlayersConfirm"),
+        label: "Guardar Jugadores",
         className: "btn-primary",
         onClick: () => {
           const groupName = document.getElementById("playerGroupName").value.trim();
           if (!groupName) {
-            alert(t("alerts.enterGroupName"));
+            alert("Introduce un nombre para el grupo.");
             return;
           }
 
@@ -1489,7 +781,7 @@ function openSavePlayersDialog() {
           savePlayerGroups();
           closeModal();
           render();
-          showToast(t("notifications.playersSavedTitle"), t("notifications.playersSavedBody", { name: groupName }), "success");
+          showToast("Jugadores Guardados", `${groupName} ya está disponible para futuros torneos.`, "success");
         }
       }
     ]
@@ -1498,7 +790,7 @@ function openSavePlayersDialog() {
 
 function openLoadPlayersDialog() {
   if (!playerGroups.length) {
-    alert(t("alerts.noSavedPlayerGroups"));
+    alert("Todavía no hay grupos de jugadores guardados.");
     return;
   }
 
@@ -1508,11 +800,11 @@ function openLoadPlayersDialog() {
         <div class="group-card">
           <div class="history-meta">
             <strong>${escapeHtml(group.name)}</strong>
-            <span class="muted-copy">${group.players.length} ${t("misc.playersShort")} - ${t("misc.savedOn", { date: formatDate(group.createdAt) })}</span>
+            <span class="muted-copy">${group.players.length} jugadores - guardado ${formatDate(group.createdAt)}</span>
           </div>
           <div class="actions">
-            <button type="button" class="btn btn-secondary load-group-btn" data-group-id="${group.id}">${t("actions.loadGroupPlayers")}</button>
-            <button type="button" class="btn btn-danger delete-group-btn" data-group-id="${group.id}">${t("actions.delete")}</button>
+            <button type="button" class="btn btn-secondary load-group-btn" data-group-id="${group.id}">Cargar Jugadores</button>
+            <button type="button" class="btn btn-danger delete-group-btn" data-group-id="${group.id}">Eliminar</button>
           </div>
         </div>
       `
@@ -1520,9 +812,9 @@ function openLoadPlayersDialog() {
     .join("");
 
   openModal({
-    title: t("modal.loadPlayersTitle"),
+    title: "Cargar Jugadores",
     body: `<div class="modal-list">${groupsMarkup}</div>`,
-    actions: [{ label: t("actions.close"), className: "btn-secondary", onClick: closeModal }]
+    actions: [{ label: "Cerrar", className: "btn-secondary", onClick: closeModal }]
   });
 
   elements.modalBody.querySelectorAll(".load-group-btn").forEach((button) => {
@@ -1535,15 +827,12 @@ function openLoadPlayersDialog() {
 
 function loadPlayerGroup(groupId) {
   const group = playerGroups.find((entry) => entry.id === groupId);
-  if (!group) {
-    return;
-  }
+  if (!group) return;
 
   elements.playerCount.value = String(group.players.length);
   elements.participants.value = group.players.map((player) => player.name).join("\n");
   closeModal();
-  animateRefresh([elements.tournamentForm]);
-  showToast(t("notifications.playersLoadedTitle"), t("notifications.playersLoadedBody", { name: group.name }), "info");
+  showToast("Jugadores Cargados", `${group.name} se cargó en la configuración.`, "info");
 }
 
 function deletePlayerGroup(groupId) {
@@ -1551,12 +840,12 @@ function deletePlayerGroup(groupId) {
   savePlayerGroups();
   closeModal();
   render();
-  showToast(t("notifications.playerGroupDeletedTitle"), t("notifications.playerGroupDeletedBody"), "warning");
+  showToast("Grupo Eliminado", "Se eliminó la lista guardada.", "warning");
 }
 
 function openTournamentHistoryDialog() {
   if (!tournamentHistory.length) {
-    alert(t("alerts.noSavedTournaments"));
+    alert("Todavía no se han guardado torneos.");
     return;
   }
 
@@ -1566,11 +855,11 @@ function openTournamentHistoryDialog() {
         <div class="history-card">
           <div class="history-meta">
             <strong>${escapeHtml(tournament.tournamentName)}</strong>
-            <span class="muted-copy">${formatDate(tournament.archivedAt)} - ${tournament.rounds.length} ${t("misc.roundsShort")} - ${tournament.finalStandings.length} ${t("misc.playersShort")}</span>
+            <span class="muted-copy">${formatDate(tournament.archivedAt)} - ${tournament.rounds.length} rondas - ${tournament.finalStandings.length} jugadores</span>
           </div>
           <div class="actions">
-            <button type="button" class="btn btn-secondary inspect-history-btn" data-history-id="${tournament.id}">${t("actions.viewStandings")}</button>
-            <button type="button" class="btn btn-danger delete-history-btn" data-history-id="${tournament.id}">${t("actions.delete")}</button>
+            <button type="button" class="btn btn-secondary inspect-history-btn" data-history-id="${tournament.id}">Ver Clasificación</button>
+            <button type="button" class="btn btn-danger delete-history-btn" data-history-id="${tournament.id}">Eliminar</button>
           </div>
         </div>
       `
@@ -1578,9 +867,9 @@ function openTournamentHistoryDialog() {
     .join("");
 
   openModal({
-    title: t("modal.tournamentHistoryTitle"),
+    title: "Historial de Torneos",
     body: `<div class="modal-list">${markup}</div>`,
-    actions: [{ label: t("actions.close"), className: "btn-secondary", onClick: closeModal }]
+    actions: [{ label: "Cerrar", className: "btn-secondary", onClick: closeModal }]
   });
 
   elements.modalBody.querySelectorAll(".inspect-history-btn").forEach((button) => {
@@ -1593,9 +882,7 @@ function openTournamentHistoryDialog() {
 
 function inspectTournamentHistory(historyId) {
   const tournament = tournamentHistory.find((entry) => entry.id === historyId);
-  if (!tournament) {
-    return;
-  }
+  if (!tournament) return;
 
   const standingsMarkup = tournament.finalStandings
     .map(
@@ -1603,7 +890,7 @@ function inspectTournamentHistory(historyId) {
         <div class="history-card">
           <div class="history-meta">
             <strong>#${standing.rank} ${escapeHtml(standing.name)}</strong>
-            <span class="muted-copy">${standing.status === "removed" ? t("status.withdrawn") : t("status.active")} - ${formatTournamentPoints(standing.points)} ${t("misc.pointsShort")} - ${t("misc.winsLossesShort", { wins: standing.wins, losses: standing.losses })} - ${t("misc.scoreLabel")} ${formatDifference(standing.scoreDifference)}</span>
+            <span class="muted-copy">${standing.status === "removed" ? "Retirado" : "Activo"} - ${formatTournamentPoints(standing.points)} pts - ${standing.wins}V-${standing.losses}D</span>
           </div>
         </div>
       `
@@ -1613,7 +900,7 @@ function inspectTournamentHistory(historyId) {
   openModal({
     title: tournament.tournamentName,
     body: `<div class="modal-list">${standingsMarkup}</div>`,
-    actions: [{ label: t("actions.back"), className: "btn-secondary", onClick: openTournamentHistoryDialog }]
+    actions: [{ label: "Volver", className: "btn-secondary", onClick: openTournamentHistoryDialog }]
   });
 }
 
@@ -1624,24 +911,24 @@ function deleteTournamentHistory(historyId) {
   saveSelectedHistoryIds();
   closeModal();
   render();
-  showToast(t("notifications.historyDeletedTitle"), t("notifications.historyDeletedBody"), "warning");
+  showToast("Entrada Eliminada", "Se eliminó el torneo archivado.", "warning");
 }
 
 function exportStandingsCsv() {
   if (!state.players.length) {
-    alert(t("alerts.createTournamentBeforeExport"));
+    alert("Crea un torneo antes de exportar la clasificación.");
     return;
   }
 
   const derived = deriveTournamentData();
   const rows = [
-    ["Rank", t("table.player"), t("table.status"), t("table.points"), t("table.wins"), t("table.losses"), t("table.setsDiff"), t("table.scoresDiff")],
+    ["Clasificación", "Jugador", "Estado", "Puntos", "Victorias", "Derrotas", "Sets +/-", "Puntos +/-"],
     ...derived.leaderboardPlayers.map((player, index) => {
       const stats = derived.statsById.get(player.id);
       return [
         index + 1,
         player.name,
-        player.status === "removed" ? t("status.withdrawn") : t("status.active"),
+        player.status === "removed" ? "Retirado" : "Activo",
         stats.points,
         stats.wins,
         stats.losses,
@@ -1656,7 +943,7 @@ function exportStandingsCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${slugify(state.tournamentName || "tournament")}-standings.csv`;
+  link.download = `${slugify(state.tournamentName || "tournament")}-clasificacion.csv`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -1691,12 +978,9 @@ function renderSetRows(card, sets) {
     const row = rowTemplate.content.firstElementChild.cloneNode(true);
     const inputs = row.querySelectorAll(".set-score-input");
     const removeButton = row.querySelector(".remove-set-btn");
-    row.querySelector(".set-label").textContent = t("match.setLabel", { index: index + 1 });
+    row.querySelector(".set-label").textContent = `Set ${index + 1}`;
     inputs[0].value = String(set.player1Score);
     inputs[1].value = String(set.player2Score);
-    inputs[0].setAttribute("aria-label", t("match.topPlayerSetScore"));
-    inputs[1].setAttribute("aria-label", t("match.bottomPlayerSetScore"));
-    removeButton.setAttribute("aria-label", t("actions.removeSet"));
 
     inputs.forEach((input) => {
       input.addEventListener("input", () => {
@@ -1733,22 +1017,38 @@ function sanitizeNumericInput(value) {
     return "0";
   }
 
-  return String(Math.floor(parsed));
+  // Máximo 11, o 14 si hay ventaja (ambos >= 11)
+  const maxValue = 14;
+  return String(Math.min(Math.floor(parsed), maxValue));
 }
 
 function validateSets(sets) {
   const activeSets = normalizeEnteredSets(sets);
   if (!activeSets.length) {
-    return { valid: false, message: t("alerts.addSetBeforeSaving") };
+    return { valid: false, message: "Añade al menos un set antes de guardar el resultado." };
   }
 
   for (const set of activeSets) {
     if (!Number.isInteger(set.player1Score) || !Number.isInteger(set.player2Score) || set.player1Score < 0 || set.player2Score < 0) {
-      return { valid: false, message: t("alerts.setScoresWholeNumbers") };
+      return { valid: false, message: "Las puntuaciones de los sets deben ser números enteros mayores o iguales a 0." };
     }
 
     if (set.player1Score === set.player2Score) {
-      return { valid: false, message: t("alerts.setWinnerRequired") };
+      return { valid: false, message: "Cada set debe tener un ganador. No se permiten empates en un set." };
+    }
+
+    // Validar límite de puntos: máximo 11, o 14 si hay ventaja
+    const maxAllowed = 14;
+    if (set.player1Score > maxAllowed || set.player2Score > maxAllowed) {
+      return { valid: false, message: `La puntuación máxima es 11, o 14 en caso de ventaja.` };
+    }
+
+    // Validar que si uno llega a 11, el otro no puede estar bajo 9
+    const minScore = Math.min(set.player1Score, set.player2Score);
+    const maxScore = Math.max(set.player1Score, set.player2Score);
+    
+    if (maxScore >= 11 && minScore < 9) {
+      return { valid: false, message: `Si uno llega a 11 puntos, el otro debe tener al menos 9.` };
     }
   }
 
@@ -1794,13 +1094,13 @@ function updateMatchPreview(card) {
   previewAward.textContent = `${formatTournamentPoints(summary.awardedPointsPlayer1)} - ${formatTournamentPoints(summary.awardedPointsPlayer2)}`;
 
   if (summary.winner === "player1") {
-    previewSummary.textContent = t("match.topPlayerWinning");
+    previewSummary.textContent = "El jugador superior va ganando el partido.";
     applyWinnerClasses(playerRows, summary.setsWonPlayer1, summary.setsWonPlayer2);
   } else if (summary.winner === "player2") {
-    previewSummary.textContent = t("match.bottomPlayerWinning");
+    previewSummary.textContent = "El jugador inferior va ganando el partido.";
     applyWinnerClasses(playerRows, summary.setsWonPlayer1, summary.setsWonPlayer2);
   } else {
-    previewSummary.textContent = t("match.drawOnSets");
+    previewSummary.textContent = "El partido está empatado a sets.";
   }
 }
 
@@ -1856,10 +1156,6 @@ function summarizeMatchResult(result) {
   const isDraw = setsWonPlayer1 === setsWonPlayer2;
   const winner = isDraw ? null : setsWonPlayer1 > setsWonPlayer2 ? "player1" : "player2";
 
-  // Scoring model:
-  // - each set won grants 0.5 points
-  // - match win grants 2 points, or a draw grants 1 point each
-  // - every rally point scored across all sets grants 0.05 points
   const setPointsPlayer1 = setsWonPlayer1 * 0.5;
   const setPointsPlayer2 = setsWonPlayer2 * 0.5;
   const matchPointsPlayer1 = isDraw ? 1 : winner === "player1" ? 2 : 0;
@@ -1888,15 +1184,11 @@ function deriveTournamentData() {
 
   state.rounds.forEach((round) => {
     round.matches.forEach((match) => {
-      if (!match.result || !match.result.completed) {
-        return;
-      }
+      if (!match.result || !match.result.completed) return;
 
       const player1Stats = statsById.get(match.player1Id);
       const player2Stats = statsById.get(match.player2Id);
-      if (!player1Stats) {
-        return;
-      }
+      if (!player1Stats) return;
 
       const summary = summarizeMatchResult(match.result);
 
@@ -1913,9 +1205,7 @@ function deriveTournamentData() {
         return;
       }
 
-      if (!player2Stats) {
-        return;
-      }
+      if (!player2Stats) return;
 
       player2Stats.scoreFor += summary.totalPointsPlayer2;
       player2Stats.scoreAgainst += summary.totalPointsPlayer1;
@@ -2084,9 +1374,6 @@ function rebuildPendingCurrentRound() {
     return;
   }
 
-  // When a player is withdrawn mid-round, only unfinished pairings are rebuilt.
-  // Completed results remain locked, and the remaining active players are paired
-  // again using their latest derived standings so the Swiss flow stays coherent.
   const derived = deriveTournamentData();
   const rebuiltPairings = generateSwissPairings(availablePlayers, currentRound.roundNumber, derived.statsById);
   currentRound.matches = reindexTables([
@@ -2107,8 +1394,6 @@ function aggregateGlobalRankings() {
 
   const rankingMap = new Map();
 
-  // Player IDs are persisted in tournament history, so aggregation uses stable
-  // identities instead of player names when merging multiple past tournaments.
   selectedTournaments.forEach((tournament) => {
     tournament.finalStandings.forEach((standing) => {
       if (!rankingMap.has(standing.playerId)) {
@@ -2199,7 +1484,7 @@ function openModal({ title, body, actions }) {
 
 function closeModal() {
   elements.modalOverlay.classList.add("hidden");
-  elements.modalTitle.textContent = t("modal.dialog");
+  elements.modalTitle.textContent = "Diálogo";
   elements.modalBody.innerHTML = "";
   elements.modalActions.innerHTML = "";
 }
@@ -2219,15 +1504,6 @@ function showToast(title, message, tone = "info") {
     toast.style.transition = "opacity 0.2s ease, transform 0.2s ease";
     window.setTimeout(() => toast.remove(), 220);
   }, 2600);
-}
-
-function animateRefresh(nodes) {
-  nodes.filter(Boolean).forEach((node) => {
-    node.classList.remove("flash-update");
-    void node.offsetWidth;
-    node.classList.add("flash-update");
-    window.setTimeout(() => node.classList.remove("flash-update"), 900);
-  });
 }
 
 function updatePairingsScrollButton() {
@@ -2280,7 +1556,7 @@ function formatTournamentPoints(value) {
 }
 
 function formatDate(value) {
-  return new Date(value).toLocaleDateString(currentLanguage === "es" ? "es-ES" : "en-GB", {
+  return new Date(value).toLocaleDateString("es-ES", {
     year: "numeric",
     month: "short",
     day: "numeric"
